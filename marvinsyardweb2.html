@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CD for Sale</title>
+<style>
+body{margin:0;height:100vh;overflow:hidden;background:black;font-family:Arial}
+
+#intro,#main{position:absolute;width:100%;height:100%;display:flex;justify-content:center;align-items:center}
+#intro{background:black;z-index:2;transition:opacity 1.5s ease}
+#main{
+  background: url('backdrop.JPG') center/cover no-repeat;
+  opacity:0;
+  transition:opacity 2s ease;
+  overflow:hidden
+}
+
+#seed{
+  width:540px; /* ~20% bigger */
+  position:absolute;
+  cursor:pointer;
+  will-change:transform;
+}
+
+#forestLayer{
+ position:absolute;
+ left:0;
+ bottom:-10%; /* raised higher */
+ width:120%; /* bigger width for scale */
+ height:95%; /* taller trees */
+ background-image:url('trees.PNG');
+ background-repeat:no-repeat;
+ background-position:center bottom;
+ background-size:cover;
+ opacity:0;
+ mix-blend-mode:screen;
+ transform:translateY(20%);
+ transition:transform 5s ease, opacity 3.5s ease;
+ z-index:2;
+}
+
+#forestLayer.show{
+ transform:translateY(0);
+ opacity:1;
+}
+
+@keyframes fadeInForest{
+ from{opacity:0;transform:translateY(40px)}
+ to{opacity:0.9;transform:translateY(0)}
+}
+
+#grain{position:absolute;width:100%;height:100%;opacity:.05;mix-blend-mode:overlay}
+
+.upload-box{width:300px;height:300px;background:white;border:2px dashed #333;display:flex;align-items:center;justify-content:center;z-index:3;cursor:pointer}
+input{display:none}
+
+
+/* ALBUM LINK IMAGE */
+#albumLink{
+ text-decoration:none;
+ position:absolute;
+ top:40%; /* 20% higher than center */
+ left:50%;
+ transform:translate(-50%,-50%) scale(0.95);
+ opacity:0;
+ transition:opacity 2s ease, transform 2s ease;
+ z-index:5;
+ cursor:pointer;
+}
+
+#albumLink.show{
+ opacity:1;
+ transform:translate(-50%,-50%) scale(1);
+}
+
+#albumLink img{
+ width:420px;
+ max-width:80vw;
+ display:block;
+}
+
+#albumText{
+ margin-top:12px;
+ text-align:center;
+ color:white;
+ font-family: 'Times New Roman', serif;
+ font-size:22px;
+ letter-spacing:1px;
+ opacity:0.9;
+ text-decoration:none;
+}
+
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <img id="seed" src="IMG_0393.GIF">
+</div>
+
+<div id="main">
+  <div id="forestLayer"></div>
+  <canvas id="grain"></canvas>
+  
+  <a id="albumLink" href="https://marvins-yard.myshopify.com/products/her-yard-the-album?variant=44919965777990" target="_blank">
+    <img src="Tracklist.JPG" alt="album">
+    <div id="albumText">Her Yard: The CD</div>
+  </a>
+</div>
+
+<script>
+const seed=document.getElementById('seed');
+const intro=document.getElementById('intro');
+const main=document.getElementById('main');
+let clicked=false;
+
+seed.onclick=()=>{
+ if(clicked) return;
+ clicked=true;
+
+ seed.src="IMG_0399.GIF";
+
+ // wait 2 seconds before drop
+ setTimeout(()=>{
+   startStopMotionDrop();
+   main.style.opacity='1';
+     startGrain();
+
+     // wait until backdrop is visible, then let the trees slowly grow upward
+     setTimeout(()=>{
+       document.getElementById('forestLayer').classList.add('show');
+     },3000);
+
+     // fade in album link AFTER everything
+     setTimeout(()=>{
+       document.getElementById('albumLink').classList.add('show');
+     },5500);
+
+   setTimeout(()=>{
+     intro.style.opacity='0';
+   },4000);
+
+ },2000);
+}
+
+// ===== STOP-MOTION DROP =====
+function startStopMotionDrop(){
+  let y = 0;
+  let rotation = 0;
+  let velocity = 2;
+  let gravity = 1.2;
+
+  function step(){
+    velocity += gravity;
+    y += velocity;
+    rotation += 12; // chunky rotation per frame
+
+    seed.style.transform = `translateY(${y}px) rotate(${rotation}deg)`;
+
+    if(y < window.innerHeight + 200){
+      setTimeout(step, 83); // ~12 FPS (1000/12 ≈ 83ms)
+    }
+  }
+
+  step();
+}
+
+// ===== FILM GRAIN =====
+function startGrain(){
+ const canvas=document.getElementById('grain');
+ const ctx=canvas.getContext('2d');
+ canvas.width=innerWidth;
+ canvas.height=innerHeight;
+
+ function loop(){
+  let img=ctx.createImageData(canvas.width,canvas.height);
+  for(let i=0;i<img.data.length;i+=4){
+    let v=Math.random()*255;
+    img.data[i]=v;
+    img.data[i+1]=v;
+    img.data[i+2]=v;
+    img.data[i+3]=15;
+  }
+  ctx.putImageData(img,0,0);
+  requestAnimationFrame(loop);
+ }
+ loop();
+}
+</script>
+
+</body>
+</html>
