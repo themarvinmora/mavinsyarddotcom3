@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CD for Sale</title>
 <style>
-body{margin:0;height:100vh;overflow:hidden;background:black;font-family:Arial}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:black;font-family:Arial}
+body{min-height:100svh;-webkit-text-size-adjust:100%;}
+*{box-sizing:border-box;}
 
-#intro,#main{position:absolute;width:100%;height:100%;display:flex;justify-content:center;align-items:center}
+#intro,#main{position:absolute;inset:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center}
 #intro{background:black;z-index:2;transition:opacity 1.5s ease}
 #main{
   background: url('backdrop.JPG') center/cover no-repeat;
@@ -16,32 +19,37 @@ body{margin:0;height:100vh;overflow:hidden;background:black;font-family:Arial}
 }
 
 #seed{
-  width:1350px; /* triple original 450px */
-  max-width:90vw; /* keep it visible on smaller screens */
+  width:min(1350px, 90vw);
+  max-height:78svh;
   position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  transform-origin:center center;
   cursor:pointer;
   will-change:transform;
+  object-fit:contain;
 }
 
 #forestLayer{
  position:absolute;
- left:0;
- bottom:-10%; /* raised higher */
- width:120%; /* bigger width for scale */
- height:95%; /* taller trees */
+ left:50%;
+ bottom:-5%;
+ width:140%;
+ height:110%;
  background-image:url('trees.PNG');
  background-repeat:no-repeat;
  background-position:center bottom;
- background-size:cover;
+ background-size:cover; /* zoom in instead of contain */
  opacity:0;
  mix-blend-mode:screen;
- transform:translateY(20%);
+ transform:translateX(-50%) translateY(22%);
  transition:transform 5s ease, opacity 3.5s ease;
  z-index:2;
 }
 
 #forestLayer.show{
- transform:translateY(0);
+ transform:translateX(-50%) translateY(0);
  opacity:1;
 }
 
@@ -65,11 +73,14 @@ input{display:none}
  display:flex;
  flex-direction:column;
  align-items:center;
+ justify-content:center;
+ width:min(88vw, 460px);
  opacity:0;
  transition:opacity 2s ease, transform 2s ease;
  z-index:5;
  cursor:pointer;
  text-decoration:none;
+ padding:0 12px;
 }
 
 #albumLink.show{
@@ -78,8 +89,9 @@ input{display:none}
 }
 
 #albumLink img{
- width:420px;
- max-width:80vw;
+ width:100%;
+ max-width:420px;
+ height:auto;
  display:block;
 }
 
@@ -87,11 +99,65 @@ input{display:none}
  margin-top:12px;
  text-align:center;
  color:white;
- font-family: 'Times New Roman', serif;
- font-size:22px;
+ font-family:'Times New Roman', serif;
+ font-size:clamp(18px, 4.5vw, 22px);
+ line-height:1.2;
  letter-spacing:1px;
  opacity:0.9;
  text-decoration:none;
+ text-wrap:balance;
+}
+
+@media (max-width: 768px){
+  #seed{
+    width:92vw;
+    max-height:70svh;
+  }
+
+  #forestLayer{
+    bottom:0;
+    width:180%;
+    height:110%;
+    background-size:cover;
+    transform:translateX(-50%) translateY(26%);
+  }
+
+  #forestLayer.show{
+    transform:translateX(-50%) translateY(0);
+  }
+
+  #albumLink{
+    top:52%;
+    width:78vw;
+  }
+
+  #albumLink img{
+    max-width:none;
+    width:100%;
+  }
+
+  #albumText{
+    margin-top:10px;
+  }
+}
+
+@media (max-width: 430px){
+  #seed{
+    width:94vw;
+    max-height:64svh;
+  }
+
+  #forestLayer{
+    width:200%;
+    height:115%;
+    bottom:0;
+    background-size:cover;
+  }
+
+  #albumLink{
+    top:54%;
+    width:82vw;
+  }
 }
 
 </style>
@@ -159,7 +225,7 @@ function startStopMotionDrop(){
     y += velocity;
     rotation += 12; // chunky rotation per frame
 
-    seed.style.transform = `translateY(${y}px) rotate(${rotation}deg)`;
+    seed.style.transform = `translate(-50%,-50%) translateY(${y}px) rotate(${rotation}deg)`;
 
     if(y < window.innerHeight + 200){
       setTimeout(step, 83); // ~12 FPS (1000/12 ≈ 83ms)
