@@ -95,7 +95,7 @@ input{display:none}
  position:absolute;
  top:28%;
  left:50%;
- transform:translate(calc(-50% - 20px), 300px);
+ transform:translate(calc(-50% - 20px), 100px);
  width:min(500px,80vw);
  pointer-events:none;
  transition:opacity 1s ease;
@@ -119,11 +119,36 @@ input{display:none}
 }
 
 
+/* iPhone / mobile only */
 @media (max-width: 768px){
+
+  /* seed gifs 2x */
   #seed{
-    width:1080px; /* roughly double previous 540px */
+    width:1080px;
     max-width:none;
   }
+
+  /* plant png 2x */
+  #plantSeedImg{
+    width:min(1000px,160vw);
+  }
+
+  /* header 2x */
+  #headerLink img{
+    width:min(840px,140vw);
+  }
+
+  /* album image 2x */
+  #albumLink img{
+    width:840px;
+    max-width:160vw;
+  }
+
+  /* album text 2x */
+  #albumText{
+    font-size:44px;
+  }
+
 }
 
 </style>
