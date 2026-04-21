@@ -95,7 +95,7 @@ input{display:none}
  position:absolute;
  top:28%;
  left:50%;
- transform:translate(calc(-50% - 20px), 100px);
+ transform:translate(calc(-50% - 20px), 300px);
  width:min(500px,80vw);
  pointer-events:none;
  transition:opacity 1s ease;
@@ -116,6 +116,14 @@ input{display:none}
  width:min(420px,70vw);
  height:auto;
  display:block;
+}
+
+
+@media (max-width: 768px){
+  #seed{
+    width:1080px; /* roughly double previous 540px */
+    max-width:none;
+  }
 }
 
 </style>
