@@ -2,54 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CD for Sale</title>
 <style>
-html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:black;font-family:Arial}
-body{min-height:100svh;-webkit-text-size-adjust:100%;}
-*{box-sizing:border-box;}
+body{margin:0;height:100vh;overflow:hidden;background:black;font-family:Arial}
 
-#intro,#main{position:absolute;inset:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center}
+#intro,#main{position:absolute;width:100%;height:100%;display:flex;justify-content:center;align-items:center}
 #intro{background:black;z-index:2;transition:opacity 1.5s ease}
 #main{
   background: url('backdrop.JPG') center/cover no-repeat;
   opacity:0;
-  transition:opacity 2s ease;
+  transition:opacity 3s ease;
   overflow:hidden
 }
 
 #seed{
-  width:min(1350px, 90vw);
-  max-height:78svh;
+  width:540px; /* ~20% bigger */
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  transform-origin:center center;
   cursor:pointer;
   will-change:transform;
-  object-fit:contain;
 }
 
 #forestLayer{
  position:absolute;
- left:50%;
- bottom:-5%;
- width:140%;
- height:110%;
+ left:0;
+ bottom:-10%; /* raised higher */
+ width:120%; /* bigger width for scale */
+ height:95%; /* taller trees */
  background-image:url('trees.PNG');
  background-repeat:no-repeat;
  background-position:center bottom;
- background-size:cover; /* zoom in instead of contain */
+ background-size:cover;
  opacity:0;
  mix-blend-mode:screen;
- transform:translateX(-50%) translateY(22%);
+ transform:translateY(20%);
  transition:transform 5s ease, opacity 3.5s ease;
  z-index:2;
 }
 
 #forestLayer.show{
- transform:translateX(-50%) translateY(0);
+ transform:translateY(0);
  opacity:1;
 }
 
@@ -66,21 +57,15 @@ input{display:none}
 
 /* ALBUM LINK IMAGE */
 #albumLink{
+ text-decoration:none;
  position:absolute;
- top:50%;
+ top:40%; /* 20% higher than center */
  left:50%;
- transform:translate(-50%,-50%);
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- width:min(88vw, 460px);
+ transform:translate(-50%,-50%) scale(0.95);
  opacity:0;
  transition:opacity 2s ease, transform 2s ease;
  z-index:5;
  cursor:pointer;
- text-decoration:none;
- padding:0 12px;
 }
 
 #albumLink.show{
@@ -89,9 +74,8 @@ input{display:none}
 }
 
 #albumLink img{
- width:100%;
- max-width:420px;
- height:auto;
+ width:420px;
+ max-width:80vw;
  display:block;
 }
 
@@ -99,76 +83,55 @@ input{display:none}
  margin-top:12px;
  text-align:center;
  color:white;
- font-family:'Times New Roman', serif;
- font-size:clamp(18px, 4.5vw, 22px);
- line-height:1.2;
+ font-family: 'Times New Roman', serif;
+ font-size:22px;
  letter-spacing:1px;
  opacity:0.9;
  text-decoration:none;
- text-wrap:balance;
 }
 
-@media (max-width: 768px){
-  #seed{
-    width:92vw;
-    max-height:70svh;
-  }
 
-  #forestLayer{
-    bottom:0;
-    width:180%;
-    height:110%;
-    background-size:cover;
-    transform:translateX(-50%) translateY(26%);
-  }
-
-  #forestLayer.show{
-    transform:translateX(-50%) translateY(0);
-  }
-
-  #albumLink{
-    top:52%;
-    width:78vw;
-  }
-
-  #albumLink img{
-    max-width:none;
-    width:100%;
-  }
-
-  #albumText{
-    margin-top:10px;
-  }
+#plantSeedImg{
+ position:absolute;
+ top:28%;
+ left:50%;
+ transform:translate(calc(-50% - 20px), 100px);
+ width:min(500px,80vw);
+ pointer-events:none;
+ transition:opacity 1s ease;
 }
 
-@media (max-width: 430px){
-  #seed{
-    width:94vw;
-    max-height:64svh;
-  }
+#headerLink{
+ opacity:0;
+ transition:opacity 3s ease;
+ position:absolute;
+ top:calc(6% - 100px);
+ left:50%;
+ transform:translateX(-50%);
+ z-index:6;
+ display:block;
+}
 
-  #forestLayer{
-    width:200%;
-    height:115%;
-    bottom:0;
-    background-size:cover;
-  }
-
-  #albumLink{
-    top:54%;
-    width:82vw;
-  }
+#headerLink img{
+ width:min(420px,70vw);
+ height:auto;
+ display:block;
 }
 
 </style>
+
 </head>
 <body>
 
 <div id="intro">
+  <img id="plantSeedImg" src="plant the seed 2.png">
   <img id="seed" src="IMG_0393.GIF">
 </div>
 
 <div id="main">
+  <a id="headerLink" href="https://www.instagram.com/marvinsyard/" target="_blank">
+    <img src="mg 3(1).png" alt="Marvin Gardens">
+  </a>
   <div id="forestLayer"></div>
   <canvas id="grain"></canvas>
   
@@ -182,11 +145,14 @@ input{display:none}
 const seed=document.getElementById('seed');
 const intro=document.getElementById('intro');
 const main=document.getElementById('main');
+const plant=document.getElementById('plantSeedImg');
 let clicked=false;
 
 seed.onclick=()=>{
  if(clicked) return;
  clicked=true;
+
+ if(plant) plant.style.opacity='0';
 
  seed.src="IMG_0399.GIF";
 
@@ -194,6 +160,7 @@ seed.onclick=()=>{
  setTimeout(()=>{
    startStopMotionDrop();
    main.style.opacity='1';
+    
      startGrain();
 
      // wait until backdrop is visible, then let the trees slowly grow upward
@@ -204,6 +171,7 @@ seed.onclick=()=>{
      // fade in album link AFTER everything
      setTimeout(()=>{
        document.getElementById('albumLink').classList.add('show');
+    document.getElementById('headerLink').style.opacity='1';
      },5500);
 
    setTimeout(()=>{
@@ -225,7 +193,7 @@ function startStopMotionDrop(){
     y += velocity;
     rotation += 12; // chunky rotation per frame
 
-    seed.style.transform = `translate(-50%,-50%) translateY(${y}px) rotate(${rotation}deg)`;
+    seed.style.transform = `translateY(${y}px) rotate(${rotation}deg)`;
 
     if(y < window.innerHeight + 200){
       setTimeout(step, 83); // ~12 FPS (1000/12 ≈ 83ms)
